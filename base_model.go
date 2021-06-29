@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-type baseModel struct {
+type BaseModel struct {
 	sessCtx mongo.SessionContext
 }
 
-func (c *baseModel) Context() context.Context {
+func (c *BaseModel) Context() context.Context {
 	if c.sessCtx != nil {
 		return c.sessCtx
 	}
@@ -20,19 +20,19 @@ func (c *baseModel) Context() context.Context {
 	return ctx
 }
 
-func (c *baseModel) NewFilter(id string) bson.M {
+func (c *BaseModel) NewFilter(id string) bson.M {
 	objId, _ := primitive.ObjectIDFromHex(id)
 	return bson.M{"_id": objId}
 }
 
-func (c *baseModel) KeysMap(m bson.M) []string {
+func (c *BaseModel) KeysMap(m bson.M) []string {
 	var keys = make([]string, 0)
 	for k, _ := range m {
 		keys = append(keys, k)
 	}
 	return keys
 }
-func (c *baseModel) SortMap(keys []string) bson.M {
+func (c *BaseModel) SortMap(keys []string) bson.M {
 	var m = bson.M{}
 	for _, k := range keys {
 		key := k
@@ -46,6 +46,6 @@ func (c *baseModel) SortMap(keys []string) bson.M {
 	return m
 }
 
-func (c *baseModel) SetSessionContext(sessCtx mongo.SessionContext) {
+func (c *BaseModel) SetSessionContext(sessCtx mongo.SessionContext) {
 	c.sessCtx = sessCtx
 }
