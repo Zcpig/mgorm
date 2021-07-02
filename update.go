@@ -14,8 +14,9 @@ type UpdateBuilder struct {
 	update interface{}
 }
 
-func (c *UpdateBuilder) SetUpsert(f bool) {
+func (c *UpdateBuilder) SetUpsert(f bool) *UpdateBuilder {
 	c.opt.SetUpsert(f)
+	return c
 }
 
 func (c *UpdateBuilder) One() (*mongo.UpdateResult, error) {
