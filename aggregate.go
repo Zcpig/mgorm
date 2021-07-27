@@ -28,6 +28,18 @@ func (c *AggregateBuilder) Project(project interface{}) *AggregateBuilder {
 	return c
 }
 
+func (c *AggregateBuilder) Lookup(lookup interface{}) *AggregateBuilder {
+	var p = bson.M{"$lookup": lookup}
+	c.pipeline = append(c.pipeline, p)
+	return c
+}
+
+func (c *AggregateBuilder) Unwind(unwind interface{}) *AggregateBuilder {
+	var p = bson.M{"$unwind": unwind}
+	c.pipeline = append(c.pipeline, p)
+	return c
+}
+
 func (c *AggregateBuilder) Limit(limit int64) *AggregateBuilder {
 	var p = bson.M{
 		"$limit": limit,
