@@ -5,6 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"strings"
 	"time"
 )
 
@@ -32,18 +33,36 @@ func (c *BaseModel) KeysMap(m bson.M) []string {
 	}
 	return keys
 }
-func (c *BaseModel) SortMap(keys []string) bson.M {
-	var m = bson.M{}
-	for _, k := range keys {
-		key := k
-		val := 1
-		if k[0] == '-' {
-			key = k[1:]
-			val = -1
+func (c *BaseModel) SortMap(fields []string) interface{} {
+	var order bson.D
+	for _, field := range fields {
+		n := 1
+		var kind string
+		if field != "" {
+			if field[0] == '$' {
+				if c := strings.Index(field, ":"); c > 1 && c < len(field)-1 {
+					kind = field[1:c]
+					field = field[c+1:]
+				}
+			}
+			switch field[0] {
+			case '+':
+				field = field[1:]
+			case '-':
+				n = -1
+				field = field[1:]
+			}
 		}
-		m[key] = val
+		if field == "" {
+			panic("Sort: empty field name")
+		}
+		if kind == "textScore" {
+			order = append(order, bson.E{Key: field, Value: bson.M{"$meta": kind}})
+		} else {
+			order = append(order, bson.E{Key: field, Value: n})
+		}
 	}
-	return m
+	return order
 }
 
 func (c *BaseModel) SetSessionContext(sessCtx mongo.SessionContext) {
