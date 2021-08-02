@@ -62,7 +62,10 @@ func (c *BaseModel) SortMap(fields []string) interface{} {
 			order = append(order, bson.E{Key: field, Value: n})
 		}
 	}
-	return order
+	if len(order) > 0 {
+		return order
+	}
+	return nil
 }
 
 func (c *BaseModel) SetSessionContext(sessCtx mongo.SessionContext) {
